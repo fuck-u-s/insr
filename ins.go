@@ -163,77 +163,7 @@ func (t *FileHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	w.Write(t.Index)
 }
 
-func main_dede() {
-	keywords := "我的网站"
-	chrome := gapi.Chrome()
-	pageUrlMap := make(map[string]string)
-	domainCom, _ := regexp.Compile(`style="text-decoration:none;">([^/]+)/&nbsp;</a><div class="c-tools"`)
-	pageCom, _ := regexp.Compile(`<a[^<]*?href="([^"]+)"[^<]*?<span class="[^"]+"><i class="c-icon c-icon-bear-pn"></i></span><span class="pc">(\d+)</span></a>`)
-	chrome.Get("https://www.baidu.com")
-	pageUrl := fmt.Sprintf("https://www.baidu.com/s?wd=%s", url.QueryEscape(keywords))
-	for i := 1; i < 1000; i++ {
-		body := chrome.Get(pageUrl)
-		allString := pageCom.FindAllStringSubmatch(body, -1)
-		for i := len(allString) - 1; i >= 0; i-- {
-			pageUrlMap[allString[i][2]] = allString[i][1]
-		}
-		pageUrl = fmt.Sprintf("https://www.baidu.com%s", pageUrlMap[fmt.Sprintf("%d", i+1)])
-		index := strings.Index(body, `id="tools_`)
-		if index >= 50 {
-			for index >= 50 {
-				part := body[index-200 : index+200]
-				title, titleState := stringVal(part, `data-tools='{"title":"`)
-				if titleState && len(title) > 0 && title == keywords {
-					submatch := domainCom.FindAllStringSubmatch(part, -1)
-					if len(submatch) > 0 {
-						println("title\t", title, "domain\t", submatch[0][1])
-					}
-				}
-				body = body[index+100:]
-				index = strings.Index(body, `id="tools_`)
-			}
-		} else {
-			println("no target found............")
-			break
-		}
-	}
-}
-func main_monitor() {
-	count := 0
-	ctx := hapi.Ctx{}
-	ctx.Host("192.168.9.1", "admin", "mrzdwznbhh520")
-	for {
-		body := ctx.Get("http://61.128.146.69:880/api/offline/tw003")
-		println(body)
-		if body != "" {
-			json := hapi.AsJson(body)
-			if len(json) > 0 {
-				count1 := 0
-				for _, v := range json {
-					if v != "" {
-						count1 += len(strings.Split(v, ","))
-					}
-				}
-				if count1 >= 10 && count != count1 {
-					ctx.Sendsms("+8617773863967", fmt.Sprintf("%d device offline,please check!", count1))
-				}
-				count = count1
-			}
-		}
-		time.Sleep(3600 * time.Second)
-	}
-}
 
-func changeYlIp(api gapi.Ctx, sport string) bool {
-	for {
-		content := api.Get("http://proxyvn.ddns.net:10000/reset?proxy=proxyvn.ddns.net:" + sport)
-		if len(content) > 0 {
-			return true
-		} else {
-			time.Sleep(1 * time.Second)
-		}
-	}
-}
 
 func main111() {
 	closeProByPort("10081")
