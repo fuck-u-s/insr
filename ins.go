@@ -612,19 +612,6 @@ func saveLog(path, content string) {
 	gapi.Appendfile(path, content)
 }
 
-func accinfo(api gapi.Ctx) (string, string, string, string, bool) {
-	infoBody := api.Get("http://61.128.146.67:18080/tdata/clientUserList?num=1")
-	println(infoBody)
-	email, emailState := stringVal(infoBody, `,"email":"`)
-	pwd, pwdState := stringVal(infoBody, `,"pwd":"`)
-	username, usernameState := stringVal(infoBody, `,"wechatname":"`)
-	nickname, nicknameState := stringVal(infoBody, `,"nickname":"`)
-	if !emailState || !pwdState || !usernameState || !nicknameState {
-		return "", "", "", "", true
-	}
-	println(email, pwd, username, nickname)
-	return email, pwd, username, nickname, false
-}
 
 func rundomuser(api gapi.Ctx, acc *Account) bool {
 	body := api.Get("https://randomuser.me/api/")
